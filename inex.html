@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap.min.js"></script>
+
+	<title>Document</title>
+
+
+	<script type="text/javascript">
+	angular.module("DemoApp",[]);
+
+
+</script>
+
+<script type="text/javascript">
+	angular.module("DemoApp")
+		.service('demoSvc', function($http,$q) {
+			var demoSvc = this;
+			demoSvc.data = {};
+
+			demoSvc.get = function() {
+				var defer = $q.defer();
+				$http.get("service.php")
+					.success(function(r) {
+						demoSvc.data = r;
+						defer.resolve(r);
+					})
+					.error(function (err,status) {
+						defer.reject(err);
+					});
+				return defer.promise;
+			};
+			return demoSvc;
+		});
+</script>
+
+<script type="text/javascript">
+	angular.module("DemoApp")
+		.controller('DemoCrtl', function( $scope,demoSvc) {
+			$scope.init = function(){
+				$scope.get();
+			}
+
+			$scope.get = function (){
+				demoSvc.get().then(function(r) {
+					console.log(r);
+					$scope.data = r;
+				},function(r){
+					//Nothing
+				})
+			};
+			$scope.init();
+		});
+</script>
+<script type="text/javascript">
+	
+angular.module("DemoApp")
+	  .directive('viewShowList', function() {
+    return {
+      templateUrl: function(elem, attr){
+        return 'viewTripDirective.html';
+      }
+    };
+  });
+</script>
+</head>
+<body ng-app="DemoApp">
+
+
+
+
+Version 2
+<div ng-controller="DemoCrtl">
+
+<pre>
+ {{data | json}} </pre>
+
+ </div>
+</body>
+</html>
